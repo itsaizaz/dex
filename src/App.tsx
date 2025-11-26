@@ -14,6 +14,7 @@ import Markets from "./pages/Markets";
 import Wallet from "./pages/Wallet";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import { WalletProvider } from '@/contexts/WalletContext';
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <TooltipProvider>
+      <WalletProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
@@ -62,6 +64,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
+     </WalletProvider>
       </TooltipProvider>
     </AuthProvider>
   </QueryClientProvider>

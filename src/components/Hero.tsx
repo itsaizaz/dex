@@ -1,21 +1,32 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, TrendingUp, Shield, Zap, Wallet } from "lucide-react";
 import { toast } from "sonner";
+import { useWallet } from "@/contexts/WalletContext";
+import WalletModal from "@/components/WalletModal";
 
 const Hero = () => {
-  const handleConnectWallet = () => {
-    toast.info("Web3 wallet connection coming soon! Use Demo Login for now.", {
-      action: {
-        label: "Try Demo",
-        onClick: () => window.location.href = "/login",
-      },
-    });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { account, connectWallet } = useWallet();
+
+  const handleConnectWallet = async () => {
+    if (account) {
+      setIsModalOpen(true);
+      return;
+    }
+
+    setIsModalOpen(true);
+  };
+
+
+  const formatAddress = (address: string): string => {
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-      {/* Animated background elements */}
+
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
@@ -47,7 +58,7 @@ const Hero = () => {
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg shadow-blue-500/50 text-lg px-8 py-6"
             >
               <Wallet className="mr-2 h-5 w-5" />
-              Connect Wallet
+              {account ? formatAddress(account) : 'Connect Wallet'}
             </Button>
             <Link to="/markets">
               <Button size="lg" variant="outline" className="border-slate-700 text-white hover:bg-slate-800/50 text-lg px-8 py-6">
@@ -57,7 +68,6 @@ const Hero = () => {
             </Link>
           </div>
 
-          {/* Feature highlights */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-20">
             <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 hover:scale-105 transition-all duration-300">
               <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-4 mx-auto">
@@ -85,6 +95,9 @@ const Hero = () => {
           </div>
         </div>
       </div>
+
+      {/* Wallet Modal */}
+      <WalletModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </section>
   );
 };
